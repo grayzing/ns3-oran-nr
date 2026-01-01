@@ -89,6 +89,7 @@ class OranDataRepositorySqlite : public OranDataRepository
     uint64_t RegisterNode(OranNearRtRic::NodeType type, uint64_t id) override;
     uint64_t RegisterNodeLteUe(uint64_t id, uint64_t imsi) override;
     uint64_t RegisterNodeLteEnb(uint64_t id, uint16_t cellId) override;
+    uint64_t RegisterNodeNrGnb(uint64_t id, uint16_t cellId) override;
     uint64_t DeregisterNode(uint64_t e2NodeId) override;
     void SavePosition(uint64_t e2NodeId, Vector pos, Time t) override;
     void SaveLteUeCellInfo(uint64_t e2NodeId, uint16_t cellId, uint16_t rnti, Time t) override;

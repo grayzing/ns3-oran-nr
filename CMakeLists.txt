@@ -198,6 +198,7 @@ build_lib(
     ${sqlite_libraries}
     ${torch_libraries}
     ${onnxruntime_libraries}
+    ${libnr}
   TEST_SOURCES
     test/oran-test-suite.cc
 )

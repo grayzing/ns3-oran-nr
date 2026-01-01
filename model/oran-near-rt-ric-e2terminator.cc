@@ -151,6 +151,11 @@ OranNearRtRicE2Terminator::ReceiveRegistrationRequest(OranNearRtRic::NodeType ty
                 id,
                 terminator->GetObject<OranE2NodeTerminatorLteEnb>()->GetNetDevice()->GetCellId());
             break;
+        case OranNearRtRic::NodeType::NRGNB:
+            e2NodeId = m_data->RegisterNodeNrGnb(
+                id,
+                terminator->GetObject<OranE2NodeTerminatorNrGnb>()->GetNetDevice()->GetCellId());
+            )
         default:
             e2NodeId = m_data->RegisterNode(type, id);
             break;

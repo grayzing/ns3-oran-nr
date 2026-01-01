@@ -142,6 +142,15 @@ class OranDataRepository : public Object
      */
     virtual uint64_t RegisterNodeLteEnb(uint64_t id, uint16_t cellId) = 0;
     /**
+     * Register a new NR gNB node and return the E2 Node ID.
+     * 
+     * NR gNBs are uniquely identified by their Cell ID.
+     * 
+     * If the gNB is already registered, return the crurently assigned E2 Node ID.
+     * If the gNB is not registered, generate and store a new E2 node for this gNB.
+     */
+    virtual uint64_t RegisterNodeNrGnb(uint64_t id, uint16_t cellId) = 0;
+    /**
      * Deregister an E2 Node.
      *
      * If the node is not registered, do nothing.
