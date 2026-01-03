@@ -151,11 +151,15 @@ class OranDataRepositorySqlite : public OranDataRepository
         INSERT_LTE_ENB_NODE,               //!< Add an LTE eNB E2 node
         INSERT_LTE_UE_CELL,                //!< Add LTE UE cell information for an E2 node
         INSERT_LTE_UE_NODE,                //!< Add an LTE UE E2 node
+        INSERT_NR_GNB_NODE,                //!< Add an NR gNB E2 node
+        INSERT_NR_UE_CELL,                 //!< Add NR UE cell information for an E2 node
+        INSERT_NR_UE_NODE,                 //!< Add an NR UE E2 node
         INSERT_NODE_ADD,                   //!< Add an E2 node
         INSERT_NODE_UPDATE,                //!< Update an E2 node's information
         INSERT_NODE_LOCATION,              //!< Add an E2 node's location
         INSERT_NODE_REGISTRATION,          //!< Add an E2 node registration request
         INSERT_LTE_UE_RSRP_RSRQ,           //!< Add LTE UE RSRP and RSRQ
+        INSERT_NR_UE_RSRP_RSRQ,            //!< Add NR UE RSRP and RSRQ
         LOG_CMM_ACTION,                    //!< Log a CM module action
         LOG_E2TERMINATOR_COMMAND,          //!< Log an E2 terminator command from the RIC
         LOG_LM_ACTION,                     //!< Log an LM action
@@ -176,6 +180,12 @@ class OranDataRepositorySqlite : public OranDataRepository
                                   //!< Node IDs
         INDEX_LTE_UE_IMSI,        //!< Index for the table with LTE UE based on IMSI
         INDEX_LTE_UE_NODEID,      //!< Index for the table with LTE UE based on E2 Node ID
+        INDEX_NR_UE_CELL_CELLID,  //!< Index for the table with NR UE Cell Information based on
+                                  //!< Cell IDs
+        INDEX_NR_UE_CELL_NODEID,  //!< Index for the table with NR UE Cell Information based on E2
+                                  //!< Node IDs
+        INDEX_NR_UE_SUPI,         //!< Index for the table with NR UE based on SUPI
+        INDEX_NR_UE_NODEID,       //!< Index for the table with NR UE based on E2 Node ID
         INDEX_NODE,               //!< Index for the table with E2 Node Information
         INDEX_NODE_LOCATION,      //!< Index for the table with Node Locations
         INDEX_NODE_REGISTRATION,  //!< Index for the table with Node Registrations

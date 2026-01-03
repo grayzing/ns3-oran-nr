@@ -65,5 +65,24 @@ namespace ns3
         NS_LOG_FUNCTION(this);
         
         return OranNearRtRic::NodeType::NRGNB;
+    }
     
+    void
+    OranE2NodeTerminatorNrGnb::ReceiveCommand(Ptr<OranCommand> command) 
+    {
+        NS_LOG_FUNCTION(this);
+    }
+
+    Ptr<NrGnbNetDevice>
+    OranE2NodeTerminatorNrGnb::GetNetDevice() const
+    {
+        NS_LOG_FUNCTION(this);
+
+        Ptr<NrGnbNetDevice> nrGnbNetDev =
+            GetNode()->GetDevice(GetNetDeviceIndex())->GetObject<NrGnbNetDevice>();
+
+        NS_ABORT_MSG_IF(nrGnbNetDev == nullptr, "Unable to find appropriate network device");
+
+        return nrGnbNetDev;
+    }
 }

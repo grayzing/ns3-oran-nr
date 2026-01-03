@@ -146,7 +146,7 @@ class OranDataRepository : public Object
      * 
      * NR gNBs are uniquely identified by their Cell ID.
      * 
-     * If the gNB is already registered, return the crurently assigned E2 Node ID.
+     * If the gNB is already registered, return the currently assigned E2 Node ID.
      * If the gNB is not registered, generate and store a new E2 node for this gNB.
      */
     virtual uint64_t RegisterNodeNrGnb(uint64_t id, uint16_t cellId) = 0;

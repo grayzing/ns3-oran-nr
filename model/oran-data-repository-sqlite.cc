@@ -241,18 +241,14 @@ OranDataRepositorySqlite::RegisterNodeLteEnb(uint64_t id, uint16_t cellId)
     }
     return e2NodeId;
 }
-
 uint64_t
 OranDataRepositorySqlite::RegisterNodeNrGnb(uint64_t id, uint16_t cellId)
 {
     NS_LOG_FUNCTION(this << id << cellId);
 
-    uint64_t nodeId = 0;
+    uint64_t e2NodeId = 0;
 
-    if(m_active) 
-    {
-        
-    }
+    return e2NodeId;
 }
 
 uint64_t
