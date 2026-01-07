@@ -28,56 +28,66 @@
  * employees is not subject to copyright protection within the United States.
  */
 
-#include "oran-lm-nr-sleep.h"
+#include "oran-e2-node-terminator-nr-ue.h"
 
-#include "oran-command.h"
-#include "oran-near-rt-ric.h"
-
-#include "ns3/abort.h"
 #include "ns3/log.h"
 
 namespace ns3
 {
-NS_LOG_COMPONENT_DEFINE("OranLmNrSleep");
-
-NS_OBJECT_ENSURE_REGISTERED(OranLmNrSleep);
+NS_LOG_COMPONENT_DEFINE("OranE2NodeTerminatorNrUe");
+NS_OBJECT_ENSURE_REGISTERED(OranE2NodeTerminatorNrUe);
 
 TypeId
-OranLmNrSleep::GetTypeId()
+OranE2NodeTerminatorNrUe::GetTypeId()
 {
-    static TypeId tid =
-        TypeId("ns3::OranLmNrSleep").SetParent<OranLm>().AddConstructor<OranLmNrSleep>();
+    static TypeId tid = TypeId("ns3::OranE2NodeTerminatorNrUe")
+                            .SetParent<OranE2NodeTerminator>()
+                            .AddConstructor<OranE2NodeTerminatorNrUe>();
 
     return tid;
 }
 
-OranLmNrSleep::OranLmNrSleep()
-    : OranLm()
-{
-    NS_LOG_FUNCTION(this);
-
-    m_name = "OranLmNrSleep";
-}
-
-OranLmNrSleep::~OranLmNrSleep()
+OranE2NodeTerminatorNrUe::OranE2NodeTerminatorNrUe()
+    : OranE2NodeTerminator()
 {
     NS_LOG_FUNCTION(this);
 }
 
-std::vector<Ptr<OranCommand>>
-OranLmNrSleep::Run()
+OranE2NodeTerminatorNrUe::~OranE2NodeTerminatorNrUe()
+{
+    NS_LOG_FUNCTION(this);
+}
+
+OranNearRtRic::NodeType
+OranE2NodeTerminatorNrUe::GetNodeType() const
 {
     NS_LOG_FUNCTION(this);
 
-    /**
-     * @todo Implement the necessary model for this LM.
-     *
-     */
-
-    NS_ABORT_MSG_IF(m_nearRtRic == nullptr,
-                    "Attemping to run LM(" + m_name + ") with NULL Near-RT RIC");
-
-    LogLogicToRepository("No action taken");
-    return {};
+    return OranNearRtRic::NRUE;
 }
+
+void
+OranE2NodeTerminatorNrUe::ReceiveCommand(Ptr<OranCommand> command)
+{
+    NS_LOG_FUNCTION(this << command);
+
+    if (m_active)
+    {
+        // No supported commands yet.
+    }
+}
+
+Ptr<NrUeNetDevice>
+OranE2NodeTerminatorNrUe::GetNetDevice() const
+{
+    NS_LOG_FUNCTION(this);
+
+    Ptr<NrUeNetDevice> nrUeNetDev =
+        GetNode()->GetDevice(GetNetDeviceIndex())->GetObject<NrUeNetDevice>();
+
+    NS_ABORT_MSG_IF(nrUeNetDev == nullptr, "Unable to find appropriate network device");
+
+    return nrUeNetDev;
+}
+
 } // namespace ns3

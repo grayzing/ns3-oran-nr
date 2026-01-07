@@ -28,56 +28,56 @@
  * employees is not subject to copyright protection within the United States.
  */
 
-#include "oran-lm-nr-sleep.h"
+#ifndef ORAN_E2_NODE_TERMINATOR_NR_UE_H
+#define ORAN_E2_NODE_TERMINATOR_NR_UE_H
 
-#include "oran-command.h"
-#include "oran-near-rt-ric.h"
-
-#include "ns3/abort.h"
-#include "ns3/log.h"
+#include "oran-e2-node-terminator.h"
+#include "ns3/nr-ue-net-device.h"
 
 namespace ns3
 {
-NS_LOG_COMPONENT_DEFINE("OranLmNrSleep");
-
-NS_OBJECT_ENSURE_REGISTERED(OranLmNrSleep);
-
-TypeId
-OranLmNrSleep::GetTypeId()
+/**
+ * @ingroup oran
+ *
+ * E2 Node Terminator for 5G NR UEs.
+ */
+class OranE2NodeTerminatorNrUe : OranE2NodeTerminator
 {
-    static TypeId tid =
-        TypeId("ns3::OranLmNrSleep").SetParent<OranLm>().AddConstructor<OranLmNrSleep>();
-
-    return tid;
-}
-
-OranLmNrSleep::OranLmNrSleep()
-    : OranLm()
-{
-    NS_LOG_FUNCTION(this);
-
-    m_name = "OranLmNrSleep";
-}
-
-OranLmNrSleep::~OranLmNrSleep()
-{
-    NS_LOG_FUNCTION(this);
-}
-
-std::vector<Ptr<OranCommand>>
-OranLmNrSleep::Run()
-{
-    NS_LOG_FUNCTION(this);
-
+  public:
     /**
-     * @todo Implement the necessary model for this LM.
+     * Get the TypeId of the OranE2NodeTerminatorNrUe class
      *
+     * @return The TypeId.
      */
-
-    NS_ABORT_MSG_IF(m_nearRtRic == nullptr,
-                    "Attemping to run LM(" + m_name + ") with NULL Near-RT RIC");
-
-    LogLogicToRepository("No action taken");
-    return {};
-}
+    static TypeId GetTypeId();
+    /**
+     * Create an instance of the OranE2NodeTerminatorNrUe class.
+     */
+    OranE2NodeTerminatorNrUe::OranE2NodeTerminatorNrUe();
+    /**
+     * The destructor of the OranE2NodeTerminatorNrUe class.
+     */
+    OranE2NodeTerminatorNrUe::~OranE2NodeTerminatorNrUe() override;
+    /**
+     * Get the E2 Node Type. For this Terminator, this method will always return
+     * the NR UE node type.
+     * 
+     * @return the E2 Node Type.
+     */
+    OranNearRtRic::NodeType GetNodeType() const override;
+    /**
+     * Receive a Command. All Commands are silently ignored right now.
+     * 
+     * @param command The received command.
+     */
+    void ReceiveCommand(Ptr<OranCommand> command) override;
+    /**
+     * Get the NetDevice of the NR UE.
+     * 
+     * @return The net device.
+     */
+    virtual Ptr<NrUeNetDevice> GetNetDevice() const;
+};
 } // namespace ns3
+
+#endif
