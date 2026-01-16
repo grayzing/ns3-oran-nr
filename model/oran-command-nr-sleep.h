@@ -44,14 +44,6 @@ namespace ns3
 class OranCommandNrSleep : public OranCommand
 {
   public:
-    enum AdvancedSleepMode
-    {
-        SM1 = 1,
-        SM2 = 2,
-        SM3 = 3,
-        SM4 = 4
-    };
-
     /**
      * Gets the TypeId of the OranCommandNrSleep class.
      *
@@ -73,7 +65,11 @@ class OranCommandNrSleep : public OranCommand
     /**
      * The Advanced Sleep Mode that the command will change the cell's sleep mode to.
      */
-    AdvancedSleepMode m_advancedSleepMode;
+    uint8_t m_advancedSleepMode;
+    /**
+     * The ID of the target cell.
+     */
+    uint64_t m_targetCellId;
 
   public:
     /**
@@ -81,12 +77,19 @@ class OranCommandNrSleep : public OranCommand
      *
      * @returns The Advanced Sleep Mode.
      */
-    OranCommandNrSleep::AdvancedSleepMode GetAdvancedSleepMode() const;
+    uint8_t GetAdvancedSleepMode() const;
+    /**
+     * Gets the target cell ID.
+     * 
+     * @returns The target cell ID.
+     */
+    uint16_t GetTargetCellId();
+    
     /**
      *
      * @returns The Object
      */
-    OranCommandNrSleep::AdvancedSleepMode GetObject();
+    // OranCommandNrSleep::AdvancedSleepMode GetObject();
 };
 } // namespace ns3
 

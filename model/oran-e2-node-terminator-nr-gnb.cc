@@ -30,101 +30,131 @@
 
 #include "oran-e2-node-terminator-nr-gnb.h"
 
-#include "ns3/log.h"
 #include "oran-command-nr-sleep.h"
+
+#include "ns3/log.h"
+#include "ns3/nr-gnb-net-device.h"
+#include "ns3/nr-gnb-phy.h"
+#include "ns3/nr-gnb-rrc.h"
+#include "ns3/object-map.h"
+#include "ns3/pointer.h"
 
 namespace ns3
 {
-    NS_LOG_COMPONENT_DEFINE("OranE2NodeTerminatorNrGnb");
+NS_LOG_COMPONENT_DEFINE("OranE2NodeTerminatorNrGnb");
 
-    NS_OBJECT_ENSURE_REGISTERED(OranE2NodeTerminatorNrGnb);
+NS_OBJECT_ENSURE_REGISTERED(OranE2NodeTerminatorNrGnb);
 
-    TypeId
-    OranE2NodeTerminatorNrGnb::GetTypeId()
+TypeId
+OranE2NodeTerminatorNrGnb::GetTypeId()
+{
+    static TypeId tid = TypeId("ns3::OranE2NodeTerminatorNrGnb")
+                            .SetParent<OranE2NodeTerminator>()
+                            .AddConstructor<OranE2NodeTerminatorNrGnb>();
+
+    return tid;
+}
+
+OranE2NodeTerminatorNrGnb::OranE2NodeTerminatorNrGnb()
+    : OranE2NodeTerminator()
+{
+    NS_LOG_FUNCTION(this);
+}
+
+OranE2NodeTerminatorNrGnb::~OranE2NodeTerminatorNrGnb()
+{
+    NS_LOG_FUNCTION(this);
+}
+
+OranNearRtRic::NodeType
+OranE2NodeTerminatorNrGnb::GetNodeType() const
+{
+    NS_LOG_FUNCTION(this);
+
+    return OranNearRtRic::NodeType::NRGNB;
+}
+
+void
+OranE2NodeTerminatorNrGnb::ReceiveCommand(Ptr<OranCommand> command)
+{
+    NS_LOG_FUNCTION(this << command);
+
+    if (m_active)
     {
-        static TypeId tid = TypeId("ns3::OranE2NodeTerminatorNrGnb")
-                                .SetParent<OranE2NodeTerminator>()
-                                .AddConstructor<OranE2NodeTerminatorNrGnb>();
-
-        return tid;
-    }
-
-    OranE2NodeTerminatorNrGnb::OranE2NodeTerminatorNrGnb()
-        : OranE2NodeTerminator()
-    {
-        NS_LOG_FUNCTION(this);
-    }
-
-    OranE2NodeTerminatorNrGnb::~OranE2NodeTerminatorNrGnb()
-    {
-        NS_LOG_FUNCTION(this);
-    }
-
-    OranNearRtRic::NodeType
-    OranE2NodeTerminatorNrGnb::GetNodeType() const
-    {
-        NS_LOG_FUNCTION(this);
-        
-        return OranNearRtRic::NodeType::NRGNB;
-    }
-    
-    void
-    OranE2NodeTerminatorNrGnb::ReceiveCommand(Ptr<OranCommand> command) 
-    {
-        NS_LOG_FUNCTION(this << command);
-
-        if (m_active)
+        if (command->GetInstanceTypeId() == OranCommandNrSleep::GetTypeId())
         {
-            if(command->GetInstanceTypeId() == OranCommandNrSleep::GetTypeId())
+            //
+            Ptr<Node> node = GetNode();
+            Ptr<NrGnbNetDevice> nrGnbNetDev = GetNetDevice();
+            Ptr<OranCommandNrSleep> sleepCommand = command->GetObject<OranCommandNrSleep>();
+            uint8_t advancedSleepMode = sleepCommand->GetAdvancedSleepMode();
+
+            //NS_ABORT_MSG_IF(advancedSleepMode > 4 || advancedSleepMode < 0,
+            //                "The provided advancedSleepMode is not recognized");
+
+            /**
+             * So this gNB ON/OFF logic is derived from the SmartMME paper
+             * SmartMME : Implementation of Base Station
+             * Switching Off Strategy in ns-3
+             * 
+             */
+            Ptr<NrGnbRrc> gnbRrc = nrGnbNetDev->GetRrc();
+            PointerValue ueMapPtr;
+            gnbRrc->GetAttribute("UeMap", ueMapPtr);
+            Ptr<const std::map<uint16_t, Ptr<NrUeManager>>> ueMap =
+                ueMapPtr.Get<const std::map<uint16_t, Ptr<NrUeManager>>>();
+            for (const auto& [rnti, ueManager] : *ueMap)
             {
-                Ptr<NrGnbNetDevice> NrGnbNetDev =
-                    GetNode()->GetDevice(GetNetDeviceIndex())->GetObject<NrGnbNetDevice>();
-
-                Ptr<OranCommandNrSleep> NrSleepCommand = command->GetObject<OranCommandNrSleep>();
-
-                OranCommandNrSleep::AdvancedSleepMode AdvancedSleepMode = NrSleepCommand->GetAdvancedSleepMode();
-
-                switch(AdvancedSleepMode)
-                {
-                    case 1:
-                    {
-                        
-                        break;
-                    }
-                    case 2:
-                    {
-
-                        break;
-                    }
-                    case 3:
-                    {
-
-                        break;
-                    }
-                    case 4:
-                    {
-
-                        break;
-                    }
-                    default:
-                    {
-                        NS_LOG_ERROR("The given advanced sleep mode is not recognized");
-                    }
-                }
+                std::cout << ueManager->GetState() << std::endl;
+                /**
+                 * @todo Implement a function getting the gNB nearest to the UE. Then send a handover request.
+                 */
             }
+            /**
+             * So these ASMs are not implemented yet.
+             * Below are, I guess, blueprints for the different ASMs
+             * and how they should look.
+             *
+             * Deactivation time = activation time
+             *
+             * Specs can be found at https://hal.science/hal-04492371v1/document
+             *
+             * But right now, only the most simple sleep modes are implemented,
+             * that is ON and OFF.
+             
+            switch (advancedSleepMode)
+            {
+            case (1): {
+                // Activation time: 35.7 microseconds
+            }
+            case (2): {
+                // Activation time: 0.5 milliseconds
+            }
+            case (3): {
+                // Activation time: 5 milliseconds
+            }
+            case (4): {
+                // Activation time: 0.5 seconds
+            }
+            default: {
+                NS_LOG_ERROR("advancedSleepMode not recognized");
+            }
+            }
+            */
         }
     }
-
-    Ptr<NrGnbNetDevice>
-    OranE2NodeTerminatorNrGnb::GetNetDevice() const
-    {
-        NS_LOG_FUNCTION(this);
-
-        Ptr<NrGnbNetDevice> nrGnbNetDev =
-            GetNode()->GetDevice(GetNetDeviceIndex())->GetObject<NrGnbNetDevice>();
-
-        NS_ABORT_MSG_IF(nrGnbNetDev == nullptr, "Unable to find appropriate network device");
-
-        return nrGnbNetDev;
-    }
 }
+
+Ptr<NrGnbNetDevice>
+OranE2NodeTerminatorNrGnb::GetNetDevice() const
+{
+    NS_LOG_FUNCTION(this);
+
+    Ptr<NrGnbNetDevice> nrGnbNetDev =
+        GetNode()->GetDevice(GetNetDeviceIndex())->GetObject<NrGnbNetDevice>();
+
+    NS_ABORT_MSG_IF(nrGnbNetDev == nullptr, "Unable to find appropriate network device");
+
+    return nrGnbNetDev;
+}
+} // namespace ns3

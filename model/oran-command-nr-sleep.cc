@@ -28,37 +28,59 @@
  * employees is not subject to copyright protection within the United States.
  */
 
-#include "ns3/log.h"
 #include "oran-command-nr-sleep.h"
+
+#include "ns3/log.h"
+#include "ns3/uinteger.h"
 
 namespace ns3
 {
-    NS_LOG_COMPONENT_DEFINE("OranCommandNrSleep");
-    
-    NS_OBJECT_ENSURE_REGISTERED(OranCommandNrSleep);
+NS_LOG_COMPONENT_DEFINE("OranCommandNrSleep");
 
-    TypeId
-    OranCommandNrSleep::GetTypeId()
-    {
-        static TypeId tid;
+NS_OBJECT_ENSURE_REGISTERED(OranCommandNrSleep);
 
-        return tid;
-    }
-
-    OranCommandNrSleep::OranCommandNrSleep()
-    {
-        NS_LOG_FUNCTION(this);
-    }
-
-    OranCommandNrSleep::~OranCommandNrSleep()
-    {
-        NS_LOG_FUNCTION(this);
-    }
-
-    OranCommandNrSleep::AdvancedSleepMode 
-    OranCommandNrSleep::GetAdvancedSleepMode() const
-    {
-        NS_LOG_FUNCTION(this << this->m_advancedSleepMode);
-        return this->m_advancedSleepMode;
-    }
+TypeId
+OranCommandNrSleep::GetTypeId()
+{
+    static TypeId tid =
+        TypeId("ns3::OranCommandNrSleep")
+            .SetParent<OranCommand>()
+            .AddConstructor<OranCommandNrSleep>()
+            .AddAttribute("TargetCellId",
+                          "The ID of the NR gNB to modify the sleep state of.",
+                          UintegerValue(0),
+                          MakeUintegerAccessor(&OranCommandNrSleep::m_targetCellId),
+                          MakeUintegerChecker<uint16_t>())
+            .AddAttribute("AdvancedSleepMode",
+                          "The desired advanced sleep mode to set the NR gNB to.",
+                          UintegerValue(0),
+                          MakeUintegerAccessor(&OranCommandNrSleep::m_advancedSleepMode),
+                          MakeUintegerChecker<uint8_t>(0));
+    return tid;
 }
+
+OranCommandNrSleep::OranCommandNrSleep()
+    : OranCommand()
+{
+    NS_LOG_FUNCTION(this);
+}
+
+OranCommandNrSleep::~OranCommandNrSleep()
+{
+    NS_LOG_FUNCTION(this);
+}
+
+uint16_t
+OranCommandNrSleep::GetTargetCellId()
+{
+    NS_LOG_FUNCTION(this);
+    return m_targetCellId;
+}
+
+uint8_t
+OranCommandNrSleep::GetAdvancedSleepMode() const
+{
+    NS_LOG_FUNCTION(this);
+    return this->m_advancedSleepMode;
+}
+} // namespace ns3
